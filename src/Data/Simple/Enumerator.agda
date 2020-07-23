@@ -98,10 +98,10 @@ module _ where
   enumerate-wb₁ n m k `1 u' .tt (here refl) = here refl
   enumerate-wb₁ (suc n) m k `var u' ⟨ x ⟩ el
     with enumerate-wb₁ n m k u' u' x (elem-inv μ-iso el)
-  ... | r = ∈-++⁺ˡ {ys = []} (∈-map⁺ ⟨_⟩ r)
+  ... | r = ∈-++⁺ˡ (∈-map⁺ ⟨_⟩ r)
   enumerate-wb₁ n m k (u₁ `+ u₂) u' (inj₁ x) el
     with enumerate-wb₁ n m k u₁ u' x (inj₁-inv (enumerate u₁) (enumerate u₂) el)
-  ... | r = ∈-++⁺ˡ (∈-++⁺ˡ {ys = []} (∈-map⁺ inj₁ r))
+  ... | r = ∈-++⁺ˡ (∈-++⁺ˡ (∈-map⁺ inj₁ r))
   enumerate-wb₁ n m k (u₁ `+ u₂) u' (inj₂ y) el
     with enumerate-wb₁ n m k u₂ u' y (inj₂-inv (enumerate u₁) (enumerate u₂) el)
   ... | r = ∈-++⁺ʳ (Data.List.map inj₁ (enumerate u₁ _ _) ++ []) (∈-++⁺ˡ {ys = []} (∈-map⁺ inj₂ r))

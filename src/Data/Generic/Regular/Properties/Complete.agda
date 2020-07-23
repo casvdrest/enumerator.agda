@@ -1,168 +1,211 @@
-
 module Data.Generic.Regular.Properties.Complete where
 
 open import Data.List
 open import Data.Enumerate
-open import Data.Product
-open import Data.Sum
+open import Data.Product hiding (map)
+open import Data.Sum hiding (map)
 open import Data.Nat
 open import Data.Unit hiding (_≤_)
+open import Data.Empty
 
 open import Data.Generic.Regular.Universe
 open import Data.Generic.Regular.Enumerator
 open import Data.Generic.Regular.Properties.Monotone
 
+open import Data.List.Properties
 open import Data.List.Membership.Propositional
 open import Data.List.Membership.Propositional.Properties
 open import Data.List.Relation.Unary.Any using (here ; there)
 
 open import Relation.Unary hiding (_∈_)
-open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; cong ; inspect)
+open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; cong ; inspect ; cong₂ ; trans)
 
 open import Function.Bundles
+open import Function using (const ; id ; _$_)
 
-module _ where 
+module _ where
+
+  ∈-resp-≡ : ∀ {A : Set} {x} {xs ys : List A} → xs ≡ ys → x ∈ xs → x ∈ ys
+  ∈-resp-≡ refl el = el
+
+  -----------------------------------------------------------------------------------------------------------------
+  -- Some helper lemmas about the behaviour of coproduct enumerators 
+
+  map-inj₁-inv : ∀ {A B : Set} {x : A} {xs} → inj₁ {B = B} x ∈ Data.List.map inj₁ xs → x ∈ xs
+  map-inj₁-inv {xs = x₁ ∷ xs} (here refl) = here refl
+  map-inj₁-inv {xs = x₁ ∷ xs} (there el) = there (map-inj₁-inv el)
+
+  map-inj₂-inv : ∀ {A B : Set} {y : B} {ys} → inj₂ {A = A} y ∈ Data.List.map inj₂ ys → y ∈ ys
+  map-inj₂-inv {ys = y ∷ ys} (here refl) = here refl
+  map-inj₂-inv {ys = y ∷ ys} (there el) = there (map-inj₂-inv el)
+
+  inj₁≠inj₂ : ∀ {A B : Set} {x : A} {ys : List B} → inj₁ x ∈ Data.List.map inj₂ ys → ⊥
+  inj₁≠inj₂ {ys = x ∷ ys} (there el) = inj₁≠inj₂ el
+
+  inj₂≠inj₁ : ∀ {A B : Set} {y : B} {xs : List A} → inj₂ y ∈ Data.List.map inj₁ xs → ⊥ 
+  inj₂≠inj₁ {xs = x ∷ xs} (there el) = inj₂≠inj₁ el
+
+  inj₁-inv : ∀ {A B : Set} {n} (e₁ : REnum A P) (e₂ : REnum B P) {er} {x : A} →
+               inj₁ x ∈ (‼ inj₁ ⊛ e₁ ⟨∣⟩ ‼ inj₂ ⊛ e₂) er n → x ∈ e₁ er n
+  inj₁-inv {n = n} e₁ e₂ {er} el with ∈-++⁻ ((‼ inj₁ ⊛ e₁) er n) el
+  ... | inj₁ x = map-inj₁-inv (∈-resp-≡ (++-identityʳ _) x) 
+  ... | inj₂ y = ⊥-elim (inj₁≠inj₂ (∈-resp-≡ (++-identityʳ _) y))
+
+  inj₂-inv : ∀ {A B : Set} {n} (e₁ : REnum A P) (e₂ : REnum B P) {er} {y : B} →
+               inj₂ y ∈ (‼ inj₁ ⊛ e₁ ⟨∣⟩ ‼ inj₂ ⊛ e₂) er n → y ∈ e₂ er n
+  inj₂-inv {n = n} e₁ e₂ {er} el with ∈-++⁻ ((‼ inj₁ ⊛ e₁) er n) el 
+  ... | inj₁ x = ⊥-elim (inj₂≠inj₁ (∈-resp-≡ (++-identityʳ _) x))
+  ... | inj₂ y = map-inj₂-inv (∈-resp-≡ (++-identityʳ _) y)
+
+
+  -----------------------------------------------------------------------------------------------------------------
+  -- Some helper lemmas about the behaviour of product enumerators
+
+  ap-complete : ∀ {A B : Set}
+                  {f : A → B} {fs}
+                  {x : A} {xs} →
+                  f ∈ fs → x ∈ xs →
+                  f x ∈ concatMap (λ f → map f xs) fs
+  ap-complete (here refl) qx = ∈-++⁺ˡ (∈-map⁺ _ qx)
+  ap-complete (there px)  qx = ∈-++⁺ʳ _ (ap-complete px qx)
+
+  fst-inv : ∀ {A B : Set} {n} (e₁ : REnum A P) (e₂ : REnum B P) {er} {x : A} {y : B} →
+              (x , y) ∈ (‼ _,_ ⊛ e₁ ⊛ e₂) er n → x ∈ e₁ er n
+  fst-inv {n = n} e₁ e₂ {er} {x} {y} el = {!!}
+
+  snd-inv : ∀ {A B : Set} {n} (e₁ : REnum A P) (e₂ : REnum B P) {er} {x : A} {y : B} →
+              (x , y) ∈ (‼ _,_ ⊛ e₁ ⊛ e₂) er n → y ∈ e₂ er n
+  snd-inv = {!!}
+
+  prod-elem : ∀ {A B : Set} {n} (e₁ : REnum A P) (e₂ : REnum B P) {er} {x : A} {y : B} →
+              x ∈ e₁ er n → y ∈ e₂ er n → 
+              (x , y) ∈ (‼ _,_ ⊛ e₁ ⊛ e₂) er n
+  prod-elem {n = n} e₁ e₂ {er} el₁ el₂ = ap-complete (ap-complete {fs = [ _,_ ]} (here refl) el₁) el₂
+
+  max : ℕ → ℕ → ℕ
+  max zero    m       = m
+  max (suc n) zero    = suc n
+  max (suc n) (suc m) = suc (max n m)
+
+  ≤-refl : ∀ n → n ≤ n
+  ≤-refl zero    = z≤n
+  ≤-refl (suc n) = s≤s (≤-refl n)
+
+  n≤maxnm : ∀ n m → n ≤ max n m
+  n≤maxnm zero    m       = z≤n
+  n≤maxnm (suc n) zero    = ≤-refl (suc n)
+  n≤maxnm (suc n) (suc m) = s≤s (n≤maxnm n m)
+
+  m≤maxnm : ∀ n m → m ≤ max n m
+  m≤maxnm zero    m       = ≤-refl m
+  m≤maxnm (suc n) zero    = z≤n
+  m≤maxnm (suc n) (suc m) = s≤s (m≤maxnm n m)
   
-  open Inverse
+  -----------------------------------------------------------------------------------------------------------------
+  -- Well-behavedness part 1: `enumerate` uses the recursive argument `μ` for every recursive call
 
-  variable
-    n m : ℕ
-
-  x∈-resp-≡ : ∀ {A : Set} {x y : A} {xs} → x ≡ y → x ∈ xs → y ∈ xs
-  x∈-resp-≡ refl x = x
-
-
-  prod-inv : ∀ (inj : R₁ ↔ R₂) {e : REnum R₁ P} {er : IEnum P} {x} →
-               (‼ (f inj) ⊛ e) (fix er) ↝ x →
-               ------------------------------------
-               e               (fix er) ↝ f⁻¹ inj x
-               
-  loc  (prod-inv inj {e} {er}     px) = loc px
-  elem (prod-inv inj {e} {er} {x} px) = elem-inv inj (x∈-resp-≡ (sym (proj₁ (inverse inj) x)) (elem px)) 
-
-
-  mono-map : ∀ (inj : R₁ ↔ R₂) {e : REnum R₁ P} {er : IEnum P} →
-               Monotone e er →
-               ---------------------------
-               Monotone (‼ (f inj) ⊛ e) er
-               
-  mono-map inj {e} {er} mt n m x el lq = inv-map-elem (mt n m (f⁻¹ inj x) (elem (prod-inv inj {e} (↑l _ el))) lq)
-
-    where inv-map-elem : ∀ {x xs} →
-                         f⁻¹ inj x ∈ xs → 
-                         ------------------
-                         x ∈ ‼-⊛ (f inj) xs
-                         
-          inv-map-elem (here refl) = here  (sym (proj₁ (inverse inj) _))
-          inv-map-elem (there px ) = there (inv-map-elem px)
-
-
-  prod-map : ∀ (f : R₁ → R₂) {e : REnum R₁ P} {er : IEnum P} {x} →
-               e (fix er) ⟨ n ⟩↝ x →
-               ------------------------------
-               (‼ f ⊛ e) (fix er) ⟨ n ⟩↝ f x
-               
-  prod-map _ = ‼-⊛-elem
+  enumerate-wb₁ : ∀ n m k d d' x →
+                    x ∈ enumerate {enums d'} (enums d) (ffix (n , λ μ _ → enumerate (enums d') μ) λ _ _ → []) m →
+                    m ≤ k → 
+                    x ∈ enumerate            (enums d) (ffix (n , λ μ _ → enumerate (enums d') μ) λ _ _ → []) k
+                    
+  enumerate-wb₁ n m k (d₁ `∪ d₂) d' (inj₁ x) el lq
+    with enumerate-wb₁ n m k d₁ d' x
+                      (inj₁-inv (enumerate (enums d₁))
+                                (enumerate (enums d₂)) el) lq 
+  ... | r = ∈-++⁺ˡ (∈-++⁺ˡ (∈-map⁺ inj₁ r))
+  enumerate-wb₁ n m k (d₁ `∪ d₂) d' (inj₂ y) el lq
+    with enumerate-wb₁ n m k d₂ d' y
+                       (inj₂-inv (enumerate (enums d₁))
+                                 (enumerate (enums d₂)) el) lq
+  ... | r = ∈-++⁺ʳ (Data.List.map inj₁ (enumerate (enums d₁) _ _) ++ [])
+                   (∈-++⁺ˡ {ys = []} (∈-map⁺ inj₂ r))
   
-    where ‼-⊛-elem : ∀ {A B : Set} {f : A → B} {x xs} →
-                       x ∈ xs →
-                       -----------------------
-                       f x ∈ ‼-⊛ f xs
-                       
-          ‼-⊛-elem (here refl) = here refl
-          ‼-⊛-elem (there p)   = there (‼-⊛-elem p)
-
-
-  -- Enumerator choice produces all of same the element that its left
-  -- operand produces
-  ⟨∣⟩-complete-left : ∀ {e₁ e₂ : REnum R P} {er x} →
-                      e₁          (fix er) ↝ x →
-                      ------------------------------
-                      (e₁ ⟨∣⟩ e₂) (fix er) ↝ x
-                      
-  loc  (⟨∣⟩-complete-left px) = loc px
-  elem (⟨∣⟩-complete-left px) = ∈-++⁺ˡ (elem px)
-
-
--- Enumerator choice produces all of same the element that its left
-  -- operand produces
-  ⟨∣⟩-complete-right : ∀ {e₁ e₂ : REnum R P} {er x} →
-                      e₂ (fix er) ↝ x →
-                      -------------------------------
-                      (e₁ ⟨∣⟩ e₂) (fix er) ↝ x
-                      
-  loc  (⟨∣⟩-complete-right px) = loc px
-  elem (⟨∣⟩-complete-right px) = ∈-++⁺ʳ _ (elem px)
-
+  enumerate-wb₁ n m k (d₁ `× d₂) d' (x , y) el lq
+    with enumerate-wb₁ n m k d₁ d' x
+                       (fst-inv (enumerate (enums d₁))
+                                (enumerate (enums d₂)) el) lq
+       | enumerate-wb₁ n m k d₂ d' y
+                       (snd-inv (enumerate (enums d₁))
+                                (enumerate (enums d₂)) el) lq
+  ... | r₁ | r₂ = prod-elem (enumerate (enums d₁))
+                            (enumerate (enums d₂)) r₁ r₂
   
-  -- ⊛-complete : ∀ {e₁ : REnum (R₁ → R₂) P}
-  --                {e₂ : REnum R₁ P}
-  --                {er f x n} →
-  --                Produces e₁ er f n → 
-  --                Produces e₂ er x n → 
-  --                Produces (e₁ ⊛ e₂) er (f x) n
-  -- prod (⊛-complete {e₁ = e₁} {e₂} {er} {n = n} pr₁ pr₂)
-  --   with enum e₁ (fix er) n
-  --      | enum e₂ (fix er) n
-  --      | prod pr₁
-  --      | prod pr₂
-  -- ... | x ∷ xs | y ∷ ys | px | qx = ap-complete px qx
-
-  --   where ap-complete : ∀ {A B : Set}
-  --                         {f : A → B} {fs}
-  --                         {x : A} {xs} →
-  --                         f ∈ fs → x ∈ xs →
-  --                         f x ∈ concatMap (λ f → Data.List.map f xs) fs
-  --         ap-complete (here refl) qx = ∈-++⁺ˡ (∈-map⁺ _ qx)
-  --         ap-complete (there px)  qx = ∈-++⁺ʳ _ (ap-complete px qx)
+  enumerate-wb₁ (suc n) m k `var d' ⟨ x ⟩ el lq
+    with enumerate-wb₁ n m k d' d' x
+                      (elem-inv μ-iso el) lq
+  ... | r = ∈-++⁺ˡ (∈-map⁺ ⟨_⟩ r)
   
-  -- postulate var-complete : ∀ {d v n} → v ∈ (enumerate d) (fix (enumerate-μ d)) n → ⟨ v ⟩ ∈ fix (enumerate-μ d) tt (suc n)
+  enumerate-wb₁ n m k `1          d' tt el lq = here refl
+  enumerate-wb₁ n m k (`k S {ki}) d' v  el lq = k-monotone ki m k _ el lq
 
-  -- max : (n m : ℕ) → ℕ
-  -- max zero    m       = m
-  -- max (suc n) zero    = suc n
-  -- max (suc n) (suc m) = suc (max n m)
 
-  -- ≤-refl : ∀ n → n ≤ n
-  -- ≤-refl zero    = z≤n
-  -- ≤-refl (suc n) = s≤s (≤-refl n)
+  -----------------------------------------------------------------------------------------------------------------
+  -- Well-behavedness part 2: `enumerate` uses the given size parameter `n` to fuel `ffix`
 
-  -- ≤-max-left : ∀ n m → n ≤ max n m
-  -- ≤-max-left zero    m       = z≤n
-  -- ≤-max-left (suc n) zero    = ≤-refl (suc n)
-  -- ≤-max-left (suc n) (suc m) = s≤s (≤-max-left n m)
+  enumerate-wb₂ : ∀ {d'} d n →
+                    enumerate {d'} d (fix (λ _ → enumerate d')) n ≡
+                    enumerate      d (ffix (n , λ μ _ → enumerate d' μ) (λ _ _ → [])) n
+                    
+  enumerate-wb₂ {d'} (d₁ `∪ d₂) n
+    with enumerate-wb₂ {d'} d₁ n | enumerate-wb₂ {d'} d₂ n 
+  ... | r₁ | r₂ = cong₂ (λ xs ys → (map inj₁ xs ++ []) ++ map inj₂ ys ++ []) r₁ r₂
+
+  enumerate-wb₂ {d'} (d₁ `× d₂) n
+    with enumerate-wb₂ {d'} d₁ n | enumerate-wb₂ {d'} d₂ n
+  ... | r₁ | r₂ = cong₂ (λ xs ys → concatMap (λ f → map f ys)
+                        (concatMap (λ f → map f xs) [ _,_ ])) r₁ r₂
+
+  enumerate-wb₂ `var       n = refl
+  enumerate-wb₂ `1         n = refl
+  enumerate-wb₂ `0         n = refl
+  enumerate-wb₂ (`k S)     n = refl
+
+
+  -----------------------------------------------------------------------------------------------------------------
+  -- all recursive calls in enumerators produced by `enumerate` use one step of fuel  
+
+  ≤suc : ∀ n → n ≤ suc n
+  ≤suc zero    = z≤n
+  ≤suc (suc n) = s≤s (≤suc n)
+
+  fix-step : ∀ {d x n} → x ∈ enumerate {d' = enums d} (enums d) (fix (λ _ → enumerate (enums d))) n
+                       → x ∈ fix (λ _ → enumerate {enums d} (enums d)) tt (suc n)
+  fix-step {d} {v} {n} el = enumerate-wb₁ n n (suc n) d d v (∈-resp-≡ (enumerate-wb₂ (enums d) n) el) (≤suc _)
+
+
+  -----------------------------------------------------------------------------------------------------------------
+  -- Completeness theorem for `enumerate`
+
+  complete : {d' : Desc k-info} (d : Desc k-info) →
+             Complete (        enumerate {enums d'} (enums d ))
+                      (const $ enumerate {enums d'} (enums d')) 
+
+  loc  (complete (d₁ `∪ d₂) {inj₁ x}) = loc (complete d₁ {x})
+  loc  (complete (d₁ `∪ d₂) {inj₂ y}) = loc (complete d₂ {y})
+  elem (complete (d₁ `∪ d₂) {inj₁ x}) = ∈-++⁺ˡ (∈-++⁺ˡ (∈-map⁺ inj₁ (elem (complete d₁ {x}))))
+  elem (complete (d₁ `∪ d₂) {inj₂ y}) = ∈-++⁺ʳ ((‼ inj₁ ⊛ enumerate (enums d₁)) _ _)
+                                               (∈-++⁺ˡ (∈-map⁺ inj₂ (elem (complete d₂ {y}))))
   
-  -- ≤-max-right : ∀ n m → m ≤ max n m 
-  -- ≤-max-right zero    m       = ≤-refl m
-  -- ≤-max-right (suc n) zero    = z≤n
-  -- ≤-max-right (suc n) (suc m) = s≤s (≤-max-right n m)
+  loc  (complete (d₁ `× d₂) {x , y}) = max (loc (complete d₁ {x})) (loc (complete d₂ {y}))
+  elem (complete (d₁ `× d₂) {x , y}) = prod-elem (enumerate (enums d₁))
+                                                 (enumerate (enums d₂))
+                                                 (monotone d₁ _ _ _ x (elem (complete d₁ {x})) (n≤maxnm _ _))
+                                                 (monotone d₂ _ _ _ y (elem (complete d₂ {y})) (m≤maxnm _ _))
+
+  loc  (complete {d'} `var {⟨ x ⟩}) = suc (loc (complete d' {x}))
+  elem (complete {d'} `var {⟨ x ⟩}) with fix-step {d'} (elem (complete d' {x}))
+  ... | p = ∈-++⁺ˡ {ys = []} (∈-map⁺ ⟨_⟩ p)
+
+  loc  (complete `1) = 0
+  elem (complete `1) = here refl
+  
+  complete (`k S {ki}) {x} = k-complete ki
 
 
-  -- -- Commpleteness of `enumerate`
-  -- complete : (d d' : Desc (Σ Set k-info)) →
-  --            Complete (enumerate   (enums ⟨$⟩ d))
-  --                     ( enumerate-μ (enums ⟨$⟩ d'))
-  -- complete (d₁ `∪ d₂) _ (inj₁ x) with complete d₁ _ x
-  -- ... | n , px
-  --   = n , ⟨∣⟩-complete-left (prod-map inj₁ n px)
-  -- complete (d₁ `∪ d₂) _ (inj₂ y) with complete d₂ _ y
-  -- ... | n , px
-  --   = n , ⟨∣⟩-complete-right {e₁ = ‼ inj₁ ⊛ enumerate (enums ⟨$⟩ d₁)}
-  --                            (prod-map inj₂ n px)                                  
-  -- complete (d₁ `× d₂) _ (x , y) with complete d₁ _ x | complete d₂ _ y
-  -- ... | n , px | m , qx
-  --   = max n m , ⊛-complete (prod-map _,_ (max n m)
-  --                            (monotone d₁ _ px (≤-max-left n m)))
-  --                          (monotone d₂ _ qx (≤-max-right n m))
-  -- complete `var d' ⟨ x ⟩ with complete d' d' x
-  -- ... | n , record { prod = pr } = suc n , record { prod = var-complete pr  }
-  -- complete `1 _  tt
-  --   = 0 , record { prod = here refl } 
-  -- complete (`k (S , ki)) _ x with k-complete ki x
-  -- ... | n , px
-  --   = n , record { prod = prod px }
+  -----------------------------------------------------------------------------------------------------------------
+  -- Completeness theorem or `enumerate-μ`
 
-
-  -- iscomplete : ∀ d → IsComplete (enumerate-μ (enums ⟨$⟩ d))
-  -- iscomplete d tt ⟨ x ⟩ with complete d d x
-  -- ... | n , p = n , prod-map _ _ p
+  iscomplete : (d' : Desc k-info) → IsComplete (enumerate-μ {enums d'} (enums d'))
+  loc  (iscomplete d' {tt} {⟨ x ⟩}) = loc (complete {d'} d' {x})
+  elem (iscomplete d' {tt} {⟨ x ⟩}) = ∈-map⁺ ⟨_⟩ (elem (complete d'))

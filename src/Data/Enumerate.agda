@@ -35,8 +35,9 @@ module _ where
   𝕗 R = ℕ × R
 
   ffix : (𝕗 (R → R)) → R → R
-  ffix (zero  , μ) z = z
-  ffix (suc n , μ) z = μ ((ffix (n , μ) z))
+
+  ffix (zero  , μ) z = z 
+  ffix (suc n , μ) z = μ (ffix (n , μ) z) --n , μ (proj₂ (ffix (n , μ) z))
 
   REnum : Set → (I → Set) → Set 
   REnum {I = I} R P = ((i : I) → Enumerator (P i)) → Enumerator R
@@ -48,7 +49,7 @@ module _ where
   Enum A = IEnum {⊤} λ where tt → A
 
   fix : IEnum {I} P → (i : I) → Enumerator (P i)
-  fix e i n = ffix (n , λ var i → (e i) var) (λ _ _ → []) i n 
+  fix e i n = ffix (n , flip e) (λ _ _ → []) i n
 
 module _ where
 
@@ -63,9 +64,9 @@ module _ where
   _∥_ : REnum R P → REnum R P → REnum R P
   (xs ∥ ys) var n = xs var n ++ ys var n
 
-  k  : IEnum P → (i : I) → REnum (P i) Q
-  (k e i) μ = fix e i
-  
+  k  : Enumerator R → REnum R P
+  k e _ n = e n
+   
   _<*>_ : REnum (R₁ → R₂) P → REnum R₁ P → REnum R₂ P
   (fs <*> xs) μ n = concatMap (λ f → map f (xs μ n)) (fs μ n)
 

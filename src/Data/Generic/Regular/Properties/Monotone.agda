@@ -16,6 +16,7 @@ open import Data.List.Relation.Unary.Any using (here ; there)
 
 open import Relation.Binary.PropositionalEquality using (refl ; cong ; _≡_ ; sym ; trans)
 
+open import Function using (_$_ ; const)
 open import Function.Bundles
 
 module _ where 
@@ -26,7 +27,7 @@ module _ where
 
   open Inverse
 
-  μ-iso : ∀ {d} → ⟦ d ⟧ (μ d) ↔ μ d
+  μ-iso : ∀ {d : Desc F} → ⟦ d ⟧ (μ d) ↔ μ d
   f   μ-iso x = ⟨ x ⟩ 
   f⁻¹ μ-iso ⟨ x ⟩ = x
 
@@ -59,18 +60,14 @@ module _ where
   ≤m→msuc : ∀ n m → suc n ≤ m → ∃ λ m' → m ≡ suc m'
   ≤m→msuc n (suc m) x = m , refl
 
-  postulate 
-    lemma : ∀ {d n x} → fix (enumerate-μ (enums ⟨$⟩ d)) tt ⟨ suc n ⟩↝ ⟨ x ⟩ →
-                            (enumerate (enums ⟨$⟩ d)) (fix (enumerate-μ (enums ⟨$⟩ d))) ⟨ n ⟩↝ x
-
-  ∈-resp-≡ : ∀ {A B : Set} {xs ys : List A}{x} → xs ≡ ys → x ∈ xs → x ∈ ys
-  ∈-resp-≡ refl px = px
+  foo : Set
+  foo = k-info ⊤
 
   -- Monotonicity of `enumerate`
   postulate
-    monotone : (d d' : Desc (Σ Set k-info)) →
-                       Monotone (enumerate   (enums ⟨$⟩ d))
-                                (enumerate-μ (enums ⟨$⟩ d'))               
+    monotone : (d d' : Desc k-info) → 
+                       Monotone (        enumerate {enums d'} (enums d ))
+                                (const $ enumerate {enums d'} (enums d'))               
 
   -- monotone (d `∪ d₁) d' n m x elem leq = {!x!}
   -- monotone (d `× d₁) d' n m x elem leq = {!n!}
