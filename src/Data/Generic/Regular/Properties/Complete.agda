@@ -69,13 +69,21 @@ module _ where
   ap-complete (here refl) qx = ∈-++⁺ˡ (∈-map⁺ _ qx)
   ap-complete (there px)  qx = ∈-++⁺ʳ _ (ap-complete px qx)
 
+  product-equiv : ∀ {A B : Set} {xs : List A} {ys : List B} →
+                    concatMap (λ f → map f ys) (concatMap (λ f → map f xs) [ _,_ ]) ≡
+                    cartesianProduct xs ys
+  product-equiv {xs = []}     = refl
+  product-equiv {xs = x ∷ xs} = cong (λ xs → map (x ,_) _ ++ xs) (product-equiv {xs = xs})
+
   fst-inv : ∀ {A B : Set} {n} (e₁ : REnum A P) (e₂ : REnum B P) {er} {x : A} {y : B} →
               (x , y) ∈ (‼ _,_ ⊛ e₁ ⊛ e₂) er n → x ∈ e₁ er n
-  fst-inv {n = n} e₁ e₂ {er} {x} {y} el = {!!}
+  fst-inv {n = n} e₁ e₂ {er} el = proj₁ (∈-cartesianProduct⁻ (e₁ er n) (e₂ er n)
+                                                             (∈-resp-≡ (product-equiv {xs = e₁ _ _} {e₂ _ _}) el))
 
   snd-inv : ∀ {A B : Set} {n} (e₁ : REnum A P) (e₂ : REnum B P) {er} {x : A} {y : B} →
               (x , y) ∈ (‼ _,_ ⊛ e₁ ⊛ e₂) er n → y ∈ e₂ er n
-  snd-inv = {!!}
+  snd-inv {n = n} e₁ e₂ {er} el = proj₂ ((∈-cartesianProduct⁻ (e₁ er n) (e₂ er n)
+                                                              (∈-resp-≡ (product-equiv {xs = e₁ _ _} {e₂ _ _}) el)))
 
   prod-elem : ∀ {A B : Set} {n} (e₁ : REnum A P) (e₂ : REnum B P) {er} {x : A} {y : B} →
               x ∈ e₁ er n → y ∈ e₂ er n → 
