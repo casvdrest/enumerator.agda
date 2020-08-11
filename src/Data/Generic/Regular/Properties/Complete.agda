@@ -25,39 +25,6 @@ open import Function using (const ; id ; _$_)
 
 module _ where
 
-  ∈-resp-≡ : ∀ {A : Set} {x} {xs ys : List A} → xs ≡ ys → x ∈ xs → x ∈ ys
-  ∈-resp-≡ refl el = el
-
-  -----------------------------------------------------------------------------------------------------------------
-  -- Some helper lemmas about the behaviour of coproduct enumerators 
-
-  map-inj₁-inv : ∀ {A B : Set} {x : A} {xs} → inj₁ {B = B} x ∈ Data.List.map inj₁ xs → x ∈ xs
-  map-inj₁-inv {xs = x₁ ∷ xs} (here refl) = here refl
-  map-inj₁-inv {xs = x₁ ∷ xs} (there el) = there (map-inj₁-inv el)
-
-  map-inj₂-inv : ∀ {A B : Set} {y : B} {ys} → inj₂ {A = A} y ∈ Data.List.map inj₂ ys → y ∈ ys
-  map-inj₂-inv {ys = y ∷ ys} (here refl) = here refl
-  map-inj₂-inv {ys = y ∷ ys} (there el) = there (map-inj₂-inv el)
-
-  inj₁≠inj₂ : ∀ {A B : Set} {x : A} {ys : List B} → inj₁ x ∈ Data.List.map inj₂ ys → ⊥
-  inj₁≠inj₂ {ys = x ∷ ys} (there el) = inj₁≠inj₂ el
-
-  inj₂≠inj₁ : ∀ {A B : Set} {y : B} {xs : List A} → inj₂ y ∈ Data.List.map inj₁ xs → ⊥ 
-  inj₂≠inj₁ {xs = x ∷ xs} (there el) = inj₂≠inj₁ el
-
-  inj₁-inv : ∀ {A B : Set} {n} (e₁ : REnum A P) (e₂ : REnum B P) {er} {x : A} →
-               inj₁ x ∈ (‼ inj₁ ⊛ e₁ ⟨∣⟩ ‼ inj₂ ⊛ e₂) er n → x ∈ e₁ er n
-  inj₁-inv {n = n} e₁ e₂ {er} el with ∈-++⁻ ((‼ inj₁ ⊛ e₁) er n) el
-  ... | inj₁ x = map-inj₁-inv (∈-resp-≡ (++-identityʳ _) x) 
-  ... | inj₂ y = ⊥-elim (inj₁≠inj₂ (∈-resp-≡ (++-identityʳ _) y))
-
-  inj₂-inv : ∀ {A B : Set} {n} (e₁ : REnum A P) (e₂ : REnum B P) {er} {y : B} →
-               inj₂ y ∈ (‼ inj₁ ⊛ e₁ ⟨∣⟩ ‼ inj₂ ⊛ e₂) er n → y ∈ e₂ er n
-  inj₂-inv {n = n} e₁ e₂ {er} el with ∈-++⁻ ((‼ inj₁ ⊛ e₁) er n) el 
-  ... | inj₁ x = ⊥-elim (inj₂≠inj₁ (∈-resp-≡ (++-identityʳ _) x))
-  ... | inj₂ y = map-inj₂-inv (∈-resp-≡ (++-identityʳ _) y)
-
-
   -----------------------------------------------------------------------------------------------------------------
   -- Some helper lemmas about the behaviour of product enumerators
 
