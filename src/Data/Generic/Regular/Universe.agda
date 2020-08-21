@@ -48,30 +48,15 @@ module _ where
     X Y : Set
     d d' : Desc F
 
-  map-reg : ∀ (d : Desc F) → (X → Y) → ⟦ d ⟧ X → ⟦ d ⟧ Y
-  map-reg (d₁ `∪ d₂) f (inj₁ x) = inj₁ (map-reg d₁ f x)
-  map-reg (d₁ `∪ d₂) f (inj₂ y) = inj₂ (map-reg d₂ f y)
-  map-reg (d₁ `× d₂) f (x , y)  = (map-reg d₁ f x) , (map-reg d₂ f y)
-  map-reg `var       f x        = f x
-  map-reg `1         f tt       = tt
-  map-reg (`k S)     f x        = x
-
-module _ where 
-
-  record IsRegular (R : Set) : Set₁ where
-    field
-      desc : Desc Enum
-      iso  : R ↔ μ desc
-
 module _ where 
 
   record k-info (S : Set) : Set where
     field
-      E : Enum S
-      k-monotone : Monotone (E tt) E
-      k-complete : IsComplete E
+      E : Enumerator S
+      k-monotone : Monotone E
+      k-complete : Complete E
 
-  open k-info public 
+  open k-info public
 
-  enums : Desc k-info → Desc Enum
+  enums : Desc k-info → Desc Enumerator
   enums = E ⟨$⟩_

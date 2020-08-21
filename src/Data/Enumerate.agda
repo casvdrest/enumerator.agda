@@ -29,69 +29,27 @@ module _ where
   Enumerator : Set → Set
   Enumerator A = (n : ℕ) → List A
 
-module _ where 
-
-  𝕗 : Set → Set
-  𝕗 R = ℕ × R
-
-  ffix : (𝕗 (R → R)) → R → R
-
-  ffix (zero  , μ) z = z 
-  ffix (suc n , μ) z = μ (ffix (n , μ) z) --n , μ (proj₂ (ffix (n , μ) z))
-
-  REnum : Set → (I → Set) → Set 
-  REnum {I = I} R P = ((i : I) → Enumerator (P i)) → Enumerator R
-
-  IEnum : (I → Set) → Set
-  IEnum {I} P = (i : I) → REnum (P i) P
-
-  Enum : Set → Set
-  Enum A = IEnum {⊤} λ where tt → A
-
-  fix : IEnum {I} P → (i : I) → Enumerator (P i)
-  fix e i n = ffix (n , flip e) (λ _ _ → []) i n
-
 module _ where
 
-  pure : R → REnum R P
-  (pure x) _ _ = [ x ]
+  ∅ : Enumerator R 
+  ∅ n = []
 
-  ∅ : REnum R P
-  ∅ _ _ = []
+  infixl 10 _⟨∣⟩_
+  
+  _⟨∣⟩_ : Enumerator R → Enumerator R → Enumerator R
+  (xs ⟨∣⟩ ys) n = xs n ++ ys n
 
-  infixl 10 _∥_
-
-  _∥_ : REnum R P → REnum R P → REnum R P
-  (xs ∥ ys) var n = xs var n ++ ys var n
-
-  k  : Enumerator R → REnum R P
-  k e _ n = e n
-   
-  _<*>_ : REnum (R₁ → R₂) P → REnum R₁ P → REnum R₂ P
-  (fs <*> xs) μ n = concatMap (λ f → map f (xs μ n)) (fs μ n)
-
-  var : (i : I) → REnum (P i) P
-  (var i) μ = μ i
-
-  ‼ : R → REnum R P
-  ‼ x = pure x
+  ‼ : R → Enumerator R
+  ‼ x n = [ x ]
 
   infixl 10 _⊛_
+  _<*>_ : Enumerator (R₁ → R₂) → Enumerator R₁ → Enumerator R₂
+  (fs <*> xs) n = concatMap ((flip map) (xs n)) (fs n)
+
+  _>>=_ : Enumerator R₁ → (R₁ → Enumerator R₂) → Enumerator R₂
+  (f >>= g) n = concatMap (flip g n) (f n)
+
   _⊛_ = _<*>_
-
-  infix 5 _⟨∣⟩_
-  _⟨∣⟩_ = _∥_
-
-  _>>=_ : REnum R₁ P → (R₁ → REnum R₂ P) → REnum R₂ P
-  (f >>= g) μ n = concatMap (λ x → (g x) μ n) (f μ n)
-
-module _ where 
-
-  record Enumerable (R : Set) : Set where
-    field 
-      enumerator : Enum R
-
-  open Enumerable public
 
 module _ where
 
@@ -110,22 +68,8 @@ module _ where
 
   open _↝_ public
 
+  Complete : Enumerator R → Set
+  Complete e = ∀[ e ↝_ ]
 
-  -- Predicates over recursive enumerators
-  RPred : Set₁
-  RPred = ∀ {I R P} → (e : REnum {I} R P) → (er : IEnum P) → Set
-
-  Complete : RPred 
-  Complete e er = ∀[ e (fix er) ↝_ ]
-
-  Monotone : RPred
-  Monotone e er = ∀ n m x →
-                    e (fix er) ⟨ n ⟩↝ x →
-                    n ≤ m →
-                    e (fix er) ⟨ m ⟩↝ x
-
-  IsComplete : Pred (IEnum P) 0ℓ
-  IsComplete e = ∀[ (flip Complete) e ∘ e ]
-
-  IsMonotone : Pred (IEnum P) 0ℓ
-  IsMonotone e = ∀[ (flip Monotone) e ∘ e ]
+  Monotone : Enumerator R → Set
+  Monotone e = ∀ {n m} → ∀[ e ⟨ n ⟩↝_ ⇒ (λ _ → n ≤ m) ⇒ e ⟨ m ⟩↝_ ]
