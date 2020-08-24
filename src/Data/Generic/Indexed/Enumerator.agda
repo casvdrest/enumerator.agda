@@ -1,4 +1,4 @@
-{-# OPTIONS --safe #-}
+{-# OPTIONS --safe --without-K #-}
 
 module Data.Generic.Indexed.Enumerator where
 
@@ -12,9 +12,12 @@ open import Data.Fin
 
 open import Data.Generic.Indexed.Universe
 
+open import Relation.Unary hiding (∅)
+
 open import Relation.Binary.PropositionalEquality using (refl ; cong ; _≡_)
 
-open import Function using (const ; Inverse ; id ; _$_)
+open import Function using (_∘_ ; const ; Inverse ; id ; _$_)
+open import Function.Bundles
 
 module _ where 
 
@@ -32,5 +35,3 @@ module _ where
 
   enum : (φ : Func Enumerator I) → (i : I) → Enumerator (μ φ i)
   enum φ i = ‼ ⟨_⟩ ⊛ enumerate (out φ i)
-
-  
