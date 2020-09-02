@@ -50,13 +50,5 @@ module _ where
 
 module _ where 
 
-  record k-info (S : Set) : Set where
-    field
-      E : Enumerator S
-      k-monotone : Monotone E
-      k-complete : Complete E
-
-  open k-info public
-
-  enums : Desc k-info → Desc Enumerator
-  enums = E ⟨$⟩_
+  enums : Desc CEnumerator → Desc Enumerator
+  enums = enum ⟨$⟩_

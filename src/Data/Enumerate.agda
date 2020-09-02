@@ -73,3 +73,11 @@ module _ where
 
   Monotone : Enumerator R → Set
   Monotone e = ∀ {n m} → ∀[ e ⟨ n ⟩↝_ ⇒ (λ _ → n ≤ m) ⇒ e ⟨ m ⟩↝_ ]
+
+  record CEnumerator (S : Set) : Set where
+    field
+      enum : Enumerator S
+      mono : Monotone enum 
+      comp : Complete enum
+
+  open CEnumerator public

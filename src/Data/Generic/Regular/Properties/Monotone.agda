@@ -101,27 +101,33 @@ module _ where
   -- Monotonicity theorem for the generic enumerator for regular types
   --------------------------------------------------------------------------------------
 
-  monotone : ∀ {d' : Desc k-info} {d : Desc k-info} → Monotone (enumerate {enums d'} (enums d))
+  monotone' : ∀ {d' : Desc CEnumerator} {d : Desc CEnumerator} → Monotone (enumerate' {enums d'} (enums d))
 
-  monotone {d = d₁ `∪ d₂} {x = inj₁ x} el lq
-    = ∈-++⁺ˡ ( ∈-map⁺ inj₁ (monotone {d = d₁}
-                 (inj₁-inv (enumerate (enums d₁)) (enumerate (enums d₂)) el) lq))
-  monotone {d = d₁ `∪ d₂} {x = inj₂ y} el lq
-    = ∈-++⁺ʳ _ ( ∈-map⁺ inj₂ (monotone {d = d₂}
-                   (inj₂-inv (enumerate (enums  d₁)) (enumerate (enums d₂)) el) lq))
+  monotone' {d = d₁ `∪ d₂} {x = inj₁ x} el lq
+    = ∈-++⁺ˡ ( ∈-map⁺ inj₁ (monotone' {d = d₁}
+                 (inj₁-inv (enumerate' (enums d₁)) (enumerate' (enums d₂)) el) lq))
+  monotone' {d = d₁ `∪ d₂} {x = inj₂ y} el lq
+    = ∈-++⁺ʳ _ ( ∈-map⁺ inj₂ (monotone' {d = d₂}
+                   (inj₂-inv (enumerate' (enums  d₁)) (enumerate' (enums d₂)) el) lq))
 
-  monotone {d = d₁ `× d₂} {x = x , y} el lq
-    = ∈-resp-≡ (sym (product-equiv {xs = enumerate (enums d₁) _}))
+  monotone' {d = d₁ `× d₂} {x = x , y} el lq
+    = ∈-resp-≡ (sym (product-equiv {xs = enumerate' (enums d₁) _}))
                (∈-cartesianProduct⁺
-                 (monotone {d = d₁} (proj₁ (∈-cartesianProduct⁻ (enumerate (enums d₁) _) (enumerate (enums d₂) _)
-                   (∈-resp-≡ (product-equiv {xs = enumerate (enums d₁) _}) el))) lq)
-                 (monotone {d = d₂} (proj₂ (∈-cartesianProduct⁻ (enumerate (enums d₁) _) (enumerate (enums d₂) _)
-                   (∈-resp-≡ (product-equiv {xs = enumerate (enums d₁) _}) el))) lq))
+                 (monotone' {d = d₁} (proj₁ (∈-cartesianProduct⁻ (enumerate' (enums d₁) _) (enumerate' (enums d₂) _)
+                   (∈-resp-≡ (product-equiv {xs = enumerate' (enums d₁) _}) el))) lq)
+                 (monotone' {d = d₂} (proj₂ (∈-cartesianProduct⁻ (enumerate' (enums d₁) _) (enumerate' (enums d₂) _)
+                   (∈-resp-≡ (product-equiv {xs = enumerate' (enums d₁) _}) el))) lq))
                    
-  monotone {d'} {d = `var} {suc n} {x = ⟨ x ⟩} el (s≤s lq)
-    with monotone {d = d'} {x = x} (elem-inv μ-iso el) lq
+  monotone' {d'} {d = `var} {suc n} {x = ⟨ x ⟩} el (s≤s lq)
+    with monotone' {d = d'} {x = x} (elem-inv μ-iso el) lq
   ... | r = ∈-map⁺ ⟨_⟩ r
   
-  monotone {d = `1} (here refl) lq = here refl
+  monotone' {d = `1} (here refl) lq = here refl
 
-  monotone {d = `k S {ki}} el lq = k-monotone ki el lq
+  monotone' {d = `k S {ki}} el lq = mono ki el lq
+
+  monotone : (D : Desc CEnumerator) → Monotone (enumerate (enums D))
+  monotone D {x = ⟨ x ⟩} el lq
+    with monotone' {D} {D} {x = x}
+                   (elem-inv μ-iso (∈-resp-≡ (++-identityʳ _) el)) lq
+  ... | r = ∈-++⁺ˡ (∈-map⁺ ⟨_⟩ r)

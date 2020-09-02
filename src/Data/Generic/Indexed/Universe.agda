@@ -56,15 +56,7 @@ module _ where
   data μ {F I} (φ : Func F I) (i : I) : Set where
     ⟨_⟩ : ⟦ out φ i ⟧ (μ φ) → μ φ i
 
-  module _ where 
+  module _ where
 
-  record Σ-info (S : Set) : Set where
-    field
-      E : Enumerator S
-      Σ-monotone : Monotone E
-      Σ-complete : Complete E
-
-  open Σ-info public
-
-  enums : IDesc Σ-info I → IDesc Enumerator I
-  enums = E ⟨$⟩_
+  enums : IDesc CEnumerator I → IDesc Enumerator I 
+  enums = enum ⟨$⟩_

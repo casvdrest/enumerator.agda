@@ -50,26 +50,30 @@ module _ where
   -- Completeness theorem for the generic enumerator for regular types. 
   --------------------------------------------------------------------------------------
 
-  complete : ∀ {d'} (d : Desc k-info) → Complete (enumerate {d' = enums d'} (enums d)) 
+  complete' : ∀ {d'} (d : Desc CEnumerator) → Complete (enumerate' {d' = enums d'} (enums d)) 
 
-  loc  (complete (d₁ `∪ d₂) {inj₁ x}) = loc (complete d₁ {x})
-  elem (complete (d₁ `∪ d₂) {inj₁ x}) = ∈-++⁺ˡ (∈-map⁺ inj₁ (elem (complete d₁ {x})))
+  loc  (complete' (d₁ `∪ d₂) {inj₁ x}) = loc (complete' d₁ {x})
+  elem (complete' (d₁ `∪ d₂) {inj₁ x}) = ∈-++⁺ˡ (∈-map⁺ inj₁ (elem (complete' d₁ {x})))
   
-  loc  (complete (d₁ `∪ d₂) {inj₂ y}) = loc (complete d₂ {y})
-  elem (complete (d₁ `∪ d₂) {inj₂ y}) = ∈-++⁺ʳ _ (∈-map⁺ inj₂ (elem (complete d₂ {y})))
+  loc  (complete' (d₁ `∪ d₂) {inj₂ y}) = loc (complete' d₂ {y})
+  elem (complete' (d₁ `∪ d₂) {inj₂ y}) = ∈-++⁺ʳ _ (∈-map⁺ inj₂ (elem (complete' d₂ {y})))
 
-  loc  (complete (d₁ `× d₂) {x , y}) = max (loc (complete d₁ {x})) (loc (complete d₂ {y}))
-  elem (complete {d'} (d₁ `× d₂) {x , y}) =
-    ∈-resp-≡ (sym $ product-equiv {xs = enumerate (enums d₁) _})
+  loc  (complete' (d₁ `× d₂) {x , y}) = max (loc (complete' d₁ {x})) (loc (complete' d₂ {y}))
+  elem (complete' {d'} (d₁ `× d₂) {x , y}) =
+    ∈-resp-≡ (sym $ product-equiv {xs = enumerate' (enums d₁) _})
       ( ∈-cartesianProduct⁺
-          ( monotone {d = d₁} (elem (complete d₁ {x})) (n≤maxnm _ _))
-          ( monotone {d = d₂} (elem (complete d₂ {y})) (m≤maxnm _ _))
+          ( monotone' {d = d₁} (elem (complete' d₁ {x})) (n≤maxnm _ _))
+          ( monotone' {d = d₂} (elem (complete' d₂ {y})) (m≤maxnm _ _))
       )
 
-  loc  (complete {d'} `var {⟨ x ⟩}) = suc (loc (complete d' {x}))
-  elem (complete {d'} `var {⟨ x ⟩}) = ∈-map⁺ ⟨_⟩ (elem (complete d' {x}))
+  loc  (complete' {d'} `var {⟨ x ⟩}) = suc (loc (complete' d' {x}))
+  elem (complete' {d'} `var {⟨ x ⟩}) = ∈-map⁺ ⟨_⟩ (elem (complete' d' {x}))
 
-  loc  (complete `1) = 0
-  elem (complete `1) = here refl
+  loc  (complete' `1) = 0
+  elem (complete' `1) = here refl
   
-  complete (`k S {ki}) = k-complete ki
+  complete' (`k S {cert}) = comp cert
+
+  complete : (D : Desc CEnumerator) → Complete (enumerate (enums D))
+  loc (complete D {⟨ x ⟩}) = loc {x = x} (complete' {D} D)
+  elem (complete D {⟨ x ⟩}) = ∈-++⁺ˡ (∈-map⁺ ⟨_⟩ (elem (complete' D)))

@@ -94,34 +94,36 @@ module _ where
   suc∈→n∈ {xs = xs} el | inj₂ y with ∈-map⁻ suc (∈-resp-≡ (++-identityʳ _) y) 
   ... | _ , fn∈ , refl = fn∈
 
-  ef-monotone : ∀ {n} → Monotone (enumerateFin n)
-  ef-monotone {.(suc _)} {x = zero} _ _ = here refl
-  ef-monotone {(suc n)} {x = suc x} el lq with ef-monotone {n} {x = x} (suc∈→n∈ el) lq
+  fins-monotone : ∀ {n} → Monotone (fins n)
+  fins-monotone {.(suc _)} {x = zero} _ _ = here refl
+  fins-monotone {(suc n)} {x = suc x} el lq with fins-monotone {n} {x = x} (suc∈→n∈ el) lq
   ... | r = ∈-++⁺ʳ [ zero ] (∈-++⁺ˡ {ys = []} (∈-map⁺ suc r))
 
-
-  monotone : ∀ {φ : Func Σ-info I} {d : IDesc Σ-info I} → Monotone (enumerate {φ = mk (enums ∘ out φ)} (enums d))
-  
-  monotone {d = d₁ `× d₂} el lq
-    = ∈-resp-≡ (sym (product-equiv {xs = enumerate (enums d₁) _}))
+  monotone' : ∀ {φ : Func CEnumerator I} {d : IDesc CEnumerator I} → Monotone (enumerate' {φ = mk (enums ∘ out φ)} (enums d))
+ 
+  monotone' {d = d₁ `× d₂} el lq
+    = ∈-resp-≡ (sym (product-equiv {xs = enumerate' (enums d₁) _}))
                (∈-cartesianProduct⁺
-                 (monotone {d = d₁} (proj₁ (∈-cartesianProduct⁻ (enumerate (enums d₁) _) (enumerate (enums d₂) _)
-                   (∈-resp-≡ (product-equiv {xs = enumerate (enums d₁) _}) el))) lq)
-                 (monotone {d = d₂} (proj₂ (∈-cartesianProduct⁻ (enumerate (enums d₁) _) (enumerate (enums d₂) _)
-                   (∈-resp-≡ (product-equiv {xs = enumerate (enums d₁) _}) el))) lq))
+                 (monotone' {d = d₁} (proj₁ (∈-cartesianProduct⁻ (enumerate' (enums d₁) _) (enumerate' (enums d₂) _)
+                   (∈-resp-≡ (product-equiv {xs = enumerate' (enums d₁) _}) el))) lq)
+                 (monotone' {d = d₂} (proj₂ (∈-cartesianProduct⁻ (enumerate' (enums d₁) _) (enumerate' (enums d₂) _)
+                   (∈-resp-≡ (product-equiv {xs = enumerate' (enums d₁) _}) el))) lq))
                    
-  monotone {d = `1} (here refl) lq = here refl
+  monotone' {d = `1} (here refl) lq = here refl
   
-  monotone {φ = φ} {d = `var i} {suc n} {x = ⟨ x ⟩} el (s≤s lq)
-    with monotone {d = out φ i} {x = x} (elem-inv μ-iso el) lq
+  monotone' {φ = φ} {d = `var i} {suc n} {x = ⟨ x ⟩} el (s≤s lq)
+    with monotone' {d = out φ i} {x = x} (elem-inv μ-iso el) lq
   ... | r = ∈-map⁺ (⟨_⟩) r
   
-  monotone {d = `σ n f} {x = fn , x} el lq
-    with ef-monotone {n} {x = fn} (proj₁ (∈-Σ⁻ el) ) lq
-       | monotone {d = f fn} {x = x} (proj₂ (∈-Σ⁻ {xs = enumerateFin _ _} el)) lq
+  monotone' {d = `σ n f} {x = fn , x} el lq
+    with fins-monotone {n} {x = fn} (proj₁ (∈-Σ⁻ el) ) lq
+       | monotone' {d = f fn} {x = x} (proj₂ (∈-Σ⁻ {xs = fins _ _} el)) lq
   ... | fn∈ | x∈ = ∈-Σ⁺ fn∈ x∈
   
-  monotone {d = `Σ S {si} f} {x = s , x} el lq
-    with Σ-monotone si (proj₁ (∈-Σ⁻ el)) lq
-       | monotone {d = f s} {x = x} (proj₂ (∈-Σ⁻ {xs = E si _} el)) lq
+  monotone' {d = `Σ S {ce} f} {x = s , x} el lq
+    with mono ce (proj₁ (∈-Σ⁻ el)) lq
+       | monotone' {d = f s} {x = x} (proj₂ (∈-Σ⁻ {xs = enum ce _} el)) lq
   ... | s∈ | x∈ = ∈-Σ⁺ s∈ x∈
+
+  monotone : ∀ (φ : Func CEnumerator I) (i : I) → Monotone (enumerate (mk (enums ∘ out φ)) i) 
+  monotone φ i {x = ⟨ x ⟩} elem lq = ∈-map⁺ (⟨_⟩) (monotone' {d = out φ i} (elem-inv μ-iso elem) lq)
