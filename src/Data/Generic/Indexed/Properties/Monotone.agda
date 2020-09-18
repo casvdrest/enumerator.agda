@@ -6,7 +6,6 @@ open import Data.Nat
 open import Data.Product hiding (map)
 open import Data.Sum hiding (map)
 open import Data.Enumerate
-open import Data.Unit hiding (_≤_)
 open import Data.List
 open import Data.Empty
 open import Data.Fin
@@ -20,10 +19,6 @@ open import Data.List.Membership.Propositional.Properties
 open import Data.List.Relation.Unary.Any using (here ; there)
 
 open import Relation.Binary.PropositionalEquality using (refl ; cong ; cong₂ ; _≡_ ; sym ; trans)
-
-open import Function using (_$_ ; const)
-open import Function.Bundles
-
 open import Function
 
 module _ where

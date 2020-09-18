@@ -3,8 +3,6 @@
 module Data.Generic.Indexed.Universe where
 
 open import Data.Unit
-open import Data.Empty
-open import Data.Sum
 open import Data.Product
 open import Data.Enumerate
 
@@ -12,11 +10,6 @@ open import Data.Nat
 open import Data.Fin
 
 open import Function
-open import Function.Bundles
-
-open import Data.List.Relation.Unary.All
-open import Data.List.Membership.Propositional
-
 open import Relation.Unary
 
 module _ where

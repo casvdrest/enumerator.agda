@@ -11,10 +11,6 @@ open import Data.Nat
 
 open import Data.Generic.Regular.Universe
 
-open import Relation.Binary.PropositionalEquality using (refl ; cong ; _≡_)
-
-open import Function using (const ; Inverse ; id ; _$_)
-
 module _ where 
 
   enumerate' : {d' : Desc Enumerator} → (d : Desc Enumerator) → Enumerator (⟦ d ⟧ (μ d'))

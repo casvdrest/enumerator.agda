@@ -2,27 +2,20 @@
 
 module Data.Generic.Regular.Properties.Complete where
 
-open import Data.List
 open import Data.Enumerate
 open import Data.Product hiding (map)
 open import Data.Sum hiding (map)
 open import Data.Nat
-open import Data.Unit hiding (_≤_)
-open import Data.Empty
 
 open import Data.Generic.Regular.Universe
 open import Data.Generic.Regular.Enumerator
 open import Data.Generic.Regular.Properties.Monotone
 
-open import Data.List.Properties
-open import Data.List.Membership.Propositional
 open import Data.List.Membership.Propositional.Properties
 open import Data.List.Relation.Unary.Any using (here ; there)
 
-open import Relation.Unary hiding (_∈_)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; cong ; inspect ; cong₂ ; trans)
 
-open import Function.Bundles
 open import Function using (const ; id ; _$_)
 
 module _ where

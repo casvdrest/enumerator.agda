@@ -12,17 +12,7 @@ open import Data.List
 open import Data.Unit hiding (_≟_)
 open import Data.Product
 open import Data.Sum 
-open import Data.Fin hiding (_≟_)
-open import Data.Nat hiding (_≟_)
-open import Data.Bool hiding (_≟_)
-open import Data.Empty
 
-open import Data.List.Membership.Propositional
-open import Data.List.Membership.Propositional.Properties
-open import Data.List.Relation.Unary.Any
-open import Data.List.Properties
-
-open import Function
 open import Function.Bundles
 
 open import Relation.Binary.PropositionalEquality renaming (cong₂ to pCong₂ ; [_] to P[_])

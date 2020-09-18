@@ -8,8 +8,6 @@ open import Data.Sum
 open import Data.Product
 open import Data.Enumerate
 
-open import Function.Bundles
-
 open import Relation.Unary
 
 module _ where 

@@ -5,21 +5,10 @@ module Instances.Membership where
 open import Instances.Type
 
 open import Data.Enumerate
-open import Data.Enumerate.Properties
-
-open import Data.Generic.Indexed.Universe
-open import Data.Generic.Indexed.Enumerator
 open import Data.Generic.Indexed.Properties.Monotone
-open import Data.Generic.Indexed.Properties.Complete
-open import Data.Generic.Indexed.CertifiedEnumerator
 
 open import Data.List 
-open import Data.Unit hiding (_≟_)
 open import Data.Product
-open import Data.Sum 
-open import Data.Fin hiding (_≟_)
-open import Data.Nat hiding (_≟_)
-open import Data.Bool hiding (_≟_)
 open import Data.Empty
 
 open import Data.List.Membership.Propositional
@@ -27,12 +16,8 @@ open import Data.List.Membership.Propositional.Properties
 open import Data.List.Relation.Unary.Any
 open import Data.List.Properties
 
-open import Function
-open import Function.Bundles
-
 open import Relation.Binary.PropositionalEquality renaming (cong₂ to pCong₂ ; [_] to P[_])
 open import Relation.Nullary
-open import Relation.Unary hiding (_∈_ ; ∅)
 
 module _ where 
   

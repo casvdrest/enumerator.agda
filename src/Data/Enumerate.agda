@@ -2,20 +2,17 @@
 
 module Data.Enumerate where
 
-open import Data.Nat
-open import Data.Bool hiding (_≤_)
-open import Data.Fin renaming (zero to fzero ; suc to fsuc) hiding (_+_ ; _≤_)
+open import Data.Nat 
+--open import Data.Bool hiding (_≤_)
+--open import Data.Fin renaming (zero to fzero ; suc to fsuc) hiding (_+_ ; _≤_)
 
-open import Data.List hiding (and )
+open import Data.List hiding (and)
 open import Data.List.Membership.Propositional
 
-open import Data.Unit hiding (_≤_)
-open import Data.Product hiding (map)
+--open import Data.Unit hiding (_≤_)
+--open import Data.Product hiding (map)
 
 open import Relation.Unary hiding (∅ ; _∈_)
-
-open import Category.Applicative
-
 open import Function
 
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl)

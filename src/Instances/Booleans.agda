@@ -4,13 +4,13 @@ module Instances.Booleans where
 
 open import Data.Enumerate
 open import Data.Bool
+open import Data.Empty
 
 open import Data.List.Membership.Propositional
 open import Data.List.Relation.Unary.Any
 
 open import Relation.Binary.PropositionalEquality
 
-open import Data.Empty
 
 module _ where
 

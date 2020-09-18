@@ -3,7 +3,6 @@
 module Data.Generic.Indexed.Enumerator where
 
 open import Data.Product hiding (map)
-open import Data.Sum hiding (map)
 open import Data.Unit 
 open import Data.Enumerate
 open import Data.List
@@ -11,13 +10,6 @@ open import Data.Nat
 open import Data.Fin
 
 open import Data.Generic.Indexed.Universe
-
-open import Relation.Unary hiding (∅)
-
-open import Relation.Binary.PropositionalEquality using (refl ; cong ; _≡_)
-
-open import Function using (_∘_ ; const ; Inverse ; id ; _$_)
-open import Function.Bundles
 
 module _ where 
 
