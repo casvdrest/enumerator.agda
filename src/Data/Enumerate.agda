@@ -6,7 +6,7 @@ open import Data.Nat
 open import Data.Bool hiding (_≤_)
 open import Data.Fin renaming (zero to fzero ; suc to fsuc) hiding (_+_ ; _≤_)
 
-open import Data.List hiding (and)
+open import Data.List hiding (and )
 open import Data.List.Membership.Propositional
 
 open import Data.Unit hiding (_≤_)
