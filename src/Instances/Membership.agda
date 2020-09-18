@@ -1,6 +1,8 @@
---{-# OPTIONS --safe #-}
+{-# OPTIONS --safe #-}
 
 module Instances.Membership where
+
+open import Instances.Type
 
 open import Data.Enumerate
 open import Data.Enumerate.Properties
@@ -33,37 +35,12 @@ open import Relation.Nullary
 open import Relation.Unary hiding (_∈_ ; ∅)
 
 module _ where 
-
-  ∈F : ((x y : A) → Dec (x ≡ y)) →
-       Func CEnumerator (A × List A)
-  out (∈F _  ) (x , [])     = `σ 0 λ()
-  out (∈F _≟_) (x , y ∷ xs) with x ≟ y
-  ... | yes refl = `σ 2 λ { zero       → `1
-                          ; (suc zero) → `var (x , xs) }
-  ... | no ×≠y   = `var (x , xs)
   
-  open Inverse
-  
-  postulate ∈F↔∈ : ∀ {x xs} → (dec : (x y : A) → Dec (x ≡ y)) → μ (mk (enums ∘ (out $ ∈F dec))) (x , xs) ↔ x ∈ xs
-
-  elems : ∀ Γ a → (dec : (x y : A) → Dec (x ≡ y)) → CEnumerator (a ∈ Γ)
-  elems Γ a dec = enum-resp-↔ (∈F↔∈ dec) (cenumerate (∈F dec) (a , Γ))
-
- {-
-  _≟_ : (a b : Type) → Dec (a ≡ b)
-  unit ≟ unit = yes refl
-  (a₁ ↦ b₁) ≟ (a₂ ↦ b₂) with a₁ ≟ a₂ | b₁ ≟ b₂
-  ... | [yes refl | yes refl = yes refl
-  ... | no ¬p    | _        = no λ where refl → ¬p refl
-  ... | yes refl | no ¬p    = no λ where refl → ¬p refl
-  (_ ↦ _) ≟ unit    = no λ()
-  unit    ≟ (_ ↦ _) = no λ()
-  -
-  elems : ∀ Γ a → Enumerator (a ∈ Γ)
-  elems [] a = ∅
-  elems (b ∷ Γ) a with a ≟ b
-  ... | yes refl = ‼ (here refl) ⟨∣⟩ (‼ there ⊛ elems Γ a)
-  ... | no  ¬p   = ‼ there ⊛ elems Γ a
+  enum-elems : ∀ Γ a → Enumerator (a ∈ Γ)
+  enum-elems [] a = ∅
+  enum-elems (b ∷ Γ) a with a ≟ b
+  ... | yes refl = ‼ (here refl) ⟨∣⟩ (‼ there ⊛ enum-elems Γ a)
+  ... | no  ¬p   = ‼ there ⊛ enum-elems Γ a
 
   there-inv₁ : ∀ {a} {Γ : Ctx} {xs : List (a ∈ Γ)} {px : a ∈ Γ} →
                  there px ∈ [ here refl ] ++ concatMap (λ f → Data.List.map f xs) [ there ] →
@@ -78,7 +55,7 @@ module _ where
   there-inv₂ elem with ∈-map⁻ there (∈-resp-≡ (++-identityʳ _) elem)
   ... | _ , elem' , refl = elem'
 
-  elems-monotone : ∀ Γ a → Monotone (elems Γ a)
+  elems-monotone : ∀ Γ a → Monotone (enum-elems Γ a)
   elems-monotone (b ∷ Γ) .b {x = here refl} elem lq
     with b ≟ b
   ... | yes refl = here refl
@@ -88,7 +65,7 @@ module _ where
   ... | yes refl = ∈-++⁺ʳ [ here refl ] (∈-++⁺ˡ (∈-map⁺ there (elems-monotone Γ b (there-inv₁ elem) lq)))
   ... | no _     = ∈-++⁺ˡ (∈-map⁺ there (elems-monotone Γ a (there-inv₂ elem) lq))
 
-  elems-complete : ∀ Γ a → Complete (elems Γ a) 
+  elems-complete : ∀ Γ a → Complete (enum-elems Γ a) 
   elems-complete (b ∷ Γ) .b {here refl}
     with b ≟ b
   ... | yes refl = ↑l 0 (here refl)
@@ -98,4 +75,7 @@ module _ where
   ... | yes refl | ↑l loc elem' = ↑l loc (∈-++⁺ʳ [ here refl ] (∈-++⁺ˡ (∈-map⁺ there elem')))
   ... | no _     | ↑l loc elem' = ↑l loc (∈-++⁺ˡ (∈-map⁺ there elem'))
 
--}
+  elems : ∀ a Γ → CEnumerator (a ∈ Γ)
+  enum (elems a Γ) = enum-elems Γ a
+  mono (elems a Γ) = elems-monotone Γ a
+  comp (elems a Γ) = elems-complete Γ a

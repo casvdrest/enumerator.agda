@@ -1,4 +1,4 @@
---{-# OPTIONS --safe #-}
+{-# OPTIONS --safe #-}
 
 module Instances.STLC where
 
@@ -49,7 +49,7 @@ module _ where
   unitD = `1
 
   identD : Ctx → Type → IDesc CEnumerator (Ctx × Type)
-  identD Γ a = `Σ (a ∈ Γ) {elems Γ a _≟_} λ _ → `1
+  identD Γ a = `Σ (a ∈ Γ) {elems a Γ} λ _ → `1
 
   absD : Ctx → Type → Type → IDesc CEnumerator (Ctx × Type)
   absD Γ a b = `var (a ∷ Γ , b)

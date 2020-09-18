@@ -1,4 +1,4 @@
---{-# OPTIONS --safe #-}
+{-# OPTIONS --safe #-}
 
 module Instances.Type where
 
