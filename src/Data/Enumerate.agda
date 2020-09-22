@@ -39,6 +39,8 @@ module _ where
   ‼ : R → Enumerator R
   ‼ x n = [ x ]
 
+  pure = ‼
+
   infixl 10 _⊛_
   _<*>_ : Enumerator (R₁ → R₂) → Enumerator R₁ → Enumerator R₂
   (fs <*> xs) n = concatMap ((flip map) (xs n)) (fs n)

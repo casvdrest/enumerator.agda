@@ -48,12 +48,16 @@ module _ where
   open Inverse
 
   TypeD↔Type : μ (enums TypeD) ↔ Type
+
   f TypeD↔Type ⟨ inj₁ (a , b) ⟩ = f TypeD↔Type a ⇒ f TypeD↔Type b
   f TypeD↔Type ⟨ inj₂ tt ⟩ = unit
+  
   f⁻¹ TypeD↔Type (a ⇒ b) = ⟨ (inj₁ (f⁻¹ TypeD↔Type a , f⁻¹ TypeD↔Type b)) ⟩
   f⁻¹ TypeD↔Type unit = ⟨ (inj₂ tt) ⟩
+
   cong₁ TypeD↔Type refl = refl
   cong₂ TypeD↔Type refl = refl
+
   proj₁ (inverse TypeD↔Type) (a ⇒ b)
     = pCong₂ _⇒_ (proj₁ (inverse TypeD↔Type) a) (proj₁ (inverse TypeD↔Type) b)
   proj₁ (inverse TypeD↔Type) unit = refl

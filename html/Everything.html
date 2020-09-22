@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>Everything</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--safe</a> <a id="20" class="Symbol">#-}</a>
+
+<a id="25" class="Keyword">module</a> <a id="32" href="Everything.html" class="Module">Everything</a> <a id="43" class="Keyword">where</a>
+
+<a id="50" class="Comment">------------------------------</a>
+<a id="81" class="Comment">-- Section 1 (Introduction) --</a>
+<a id="112" class="Comment">------------------------------</a>
+
+<a id="144" class="Comment">-- `Expr` data type</a>
+<a id="164" class="Keyword">open</a> <a id="169" class="Keyword">import</a> <a id="176" href="Instances.Expr.html" class="Module">Instances.Expr</a>
+
+
+<a id="193" class="Comment">-----------------------------------------</a>
+<a id="235" class="Comment">-- Section 2 (Enumerator construction) --</a>
+<a id="277" class="Comment">-----------------------------------------</a>
+
+<a id="320" class="Comment">-- Enumerator type + combinators + correctness properties (2.1)</a>
+<a id="384" class="Keyword">open</a> <a id="389" class="Keyword">import</a> <a id="396" href="Data.Enumerate.html" class="Module">Data.Enumerate</a>
+
+<a id="412" class="Comment">-- 2.1 examples</a>
+<a id="428" class="Keyword">open</a> <a id="433" class="Keyword">import</a> <a id="440" href="Instances.Nat.html" class="Module">Instances.Nat</a> 
+<a id="455" class="Keyword">open</a> <a id="460" class="Keyword">import</a> <a id="467" href="Instances.Fin.html" class="Module">Instances.Fin</a>
+<a id="481" class="Keyword">open</a> <a id="486" class="Keyword">import</a> <a id="493" href="Instances.Pair.html" class="Module">Instances.Pair</a>
+<a id="508" class="Keyword">open</a> <a id="513" class="Keyword">import</a> <a id="520" href="Instances.Booleans.html" class="Module">Instances.Booleans</a>
+
+
+<a id="541" class="Comment">-------------------------------</a>
+<a id="573" class="Comment">-- Section 3 (Regular Types) --</a>
+<a id="605" class="Comment">-------------------------------</a>
+
+<a id="638" class="Comment">-- Universe definition</a>
+<a id="661" class="Keyword">open</a> <a id="666" class="Keyword">import</a> <a id="673" href="Data.Generic.Regular.Universe.html" class="Module">Data.Generic.Regular.Universe</a>
+<a id="703" class="Comment">-- Generic enumerator</a>
+<a id="725" class="Keyword">open</a> <a id="730" class="Keyword">import</a> <a id="737" href="Data.Generic.Regular.Enumerator.html" class="Module">Data.Generic.Regular.Enumerator</a>
+<a id="769" class="Comment">-- Enuemrators respect isomorphism</a>
+<a id="804" class="Keyword">open</a> <a id="809" class="Keyword">import</a> <a id="816" href="Data.Enumerate.Properties.html" class="Module">Data.Enumerate.Properties</a>
+<a id="842" class="Comment">-- Correctness proofs</a>
+<a id="864" class="Keyword">open</a> <a id="869" class="Keyword">import</a> <a id="876" href="Data.Generic.Regular.Properties.Monotone.html" class="Module">Data.Generic.Regular.Properties.Monotone</a>
+<a id="917" class="Keyword">open</a> <a id="922" class="Keyword">import</a> <a id="929" href="Data.Generic.Regular.Properties.Complete.html" class="Module">Data.Generic.Regular.Properties.Complete</a>
+<a id="970" class="Comment">-- Certified enumerator</a>
+<a id="994" class="Keyword">open</a> <a id="999" class="Keyword">import</a> <a id="1006" href="Data.Generic.Regular.CertifiedEnumerator.html" class="Module">Data.Generic.Regular.CertifiedEnumerator</a>
+
+
+<a id="1049" class="Comment">-------------------------------</a>
+<a id="1081" class="Comment">-- Section 4 (Indexed Types) --</a>
+<a id="1113" class="Comment">-------------------------------</a>
+
+<a id="1146" class="Comment">-- Universe definition</a>
+<a id="1169" class="Keyword">open</a> <a id="1174" class="Keyword">import</a> <a id="1181" href="Data.Generic.Indexed.Universe.html" class="Module">Data.Generic.Indexed.Universe</a>
+<a id="1211" class="Comment">-- Generic enumerator</a>
+<a id="1233" class="Keyword">open</a> <a id="1238" class="Keyword">import</a> <a id="1245" href="Data.Generic.Indexed.Enumerator.html" class="Module">Data.Generic.Indexed.Enumerator</a>
+<a id="1277" class="Comment">-- Correctness proofs</a>
+<a id="1299" class="Keyword">open</a> <a id="1304" class="Keyword">import</a> <a id="1311" href="Data.Generic.Indexed.Properties.Monotone.html" class="Module">Data.Generic.Indexed.Properties.Monotone</a>
+<a id="1352" class="Keyword">open</a> <a id="1357" class="Keyword">import</a> <a id="1364" href="Data.Generic.Indexed.Properties.Complete.html" class="Module">Data.Generic.Indexed.Properties.Complete</a>
+<a id="1405" class="Comment">-- Certified enumerator</a>
+<a id="1429" class="Keyword">open</a> <a id="1434" class="Keyword">import</a> <a id="1441" href="Data.Generic.Indexed.CertifiedEnumerator.html" class="Module">Data.Generic.Indexed.CertifiedEnumerator</a>
+
+<a id="1483" class="Comment">-------------------------</a>
+<a id="1509" class="Comment">-- Section 5 (Testing) --</a>
+<a id="1535" class="Comment">-------------------------</a>
+
+<a id="1562" class="Comment">-- See &#39;Testing.agda&#39;, cannot be imported with the --safe options,</a>
+<a id="1629" class="Comment">-- since one of the examples from the paper has an open interaction point</a>
+
+<a id="1704" class="Comment">----------------------</a>
+<a id="1727" class="Comment">-- Section 6 (STLC) --</a>
+<a id="1750" class="Comment">----------------------</a>
+
+<a id="1774" class="Comment">-- Types</a>
+<a id="1783" class="Keyword">open</a> <a id="1788" class="Keyword">import</a> <a id="1795" href="Instances.Type.html" class="Module">Instances.Type</a>
+<a id="1810" class="Comment">-- Membership</a>
+<a id="1824" class="Keyword">open</a> <a id="1829" class="Keyword">import</a> <a id="1836" href="Instances.Membership.html" class="Module">Instances.Membership</a>
+<a id="1857" class="Comment">-- Terms</a>
+<a id="1866" class="Keyword">open</a> <a id="1871" class="Keyword">import</a> <a id="1878" href="Instances.STLC.html" class="Module">Instances.STLC</a>
+
+</pre></body></html>

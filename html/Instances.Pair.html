@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>Instances.Pair</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--safe</a> <a id="20" class="Symbol">#-}</a>
+
+<a id="25" class="Keyword">module</a> <a id="32" href="Instances.Pair.html" class="Module">Instances.Pair</a> <a id="47" class="Keyword">where</a>
+
+<a id="54" class="Keyword">open</a> <a id="59" class="Keyword">import</a> <a id="66" href="Data.Product.html" class="Module">Data.Product</a>
+<a id="79" class="Keyword">open</a> <a id="84" class="Keyword">import</a> <a id="91" href="Data.Enumerate.html" class="Module">Data.Enumerate</a>
+
+<a id="107" class="Keyword">module</a> <a id="114" href="Instances.Pair.html#114" class="Module">_</a> <a id="116" class="Keyword">where</a>
+
+  <a id="125" href="Instances.Pair.html#125" class="Function">pairs</a> <a id="131" class="Symbol">:</a> <a id="133" href="Data.Enumerate.html#579" class="Function">Enumerator</a> <a id="144" href="Data.Enumerate.html#535" class="Generalizable">A</a> <a id="146" class="Symbol">→</a> <a id="148" href="Data.Enumerate.html#579" class="Function">Enumerator</a> <a id="159" href="Data.Enumerate.html#537" class="Generalizable">B</a> <a id="161" class="Symbol">→</a> <a id="163" href="Data.Enumerate.html#579" class="Function">Enumerator</a> <a id="174" class="Symbol">(</a><a id="175" href="Data.Enumerate.html#535" class="Generalizable">A</a> <a id="177" href="Data.Product.html#1167" class="Function Operator">×</a> <a id="179" href="Data.Enumerate.html#537" class="Generalizable">B</a><a id="180" class="Symbol">)</a>
+  <a id="184" href="Instances.Pair.html#125" class="Function">pairs</a> <a id="190" href="Instances.Pair.html#190" class="Bound">e₁</a> <a id="193" href="Instances.Pair.html#193" class="Bound">e₂</a> <a id="196" class="Symbol">=</a> <a id="198" href="Data.Enumerate.html#793" class="Function">‼</a> <a id="200" href="Agda.Builtin.Sigma.html#236" class="InductiveConstructor Operator">_,_</a> <a id="204" href="Data.Enumerate.html#1087" class="Function Operator">⊛</a> <a id="206" href="Instances.Pair.html#190" class="Bound">e₁</a> <a id="209" href="Data.Enumerate.html#1087" class="Function Operator">⊛</a> <a id="211" href="Instances.Pair.html#193" class="Bound">e₂</a>
+</pre></body></html>
