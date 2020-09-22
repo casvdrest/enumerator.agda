@@ -55,9 +55,15 @@ open import Data.Generic.Indexed.Properties.Complete
 -- Certified enumerator
 open import Data.Generic.Indexed.CertifiedEnumerator
 
+-------------------------
+-- Section 5 (Testing) --
+-------------------------
+
+-- See 'Testing.agda', cannot be imported with the --safe options,
+-- since one of the examples from the paper has an open interaction point
 
 ----------------------
--- Section 5 (STLC) --
+-- Section 6 (STLC) --
 ----------------------
 
 -- Types
