@@ -12,6 +12,6 @@ how to compile `.agda` source files.
 
 ## Browsable HTML
 
-Open `html/Everything.html` in a webbrowser to browse throught the
+Go to [here (Everything.agda)](https://casvdrest.github.io/enumerator.agda/Everything.html) to browse throught the
 code interactively. 
 
